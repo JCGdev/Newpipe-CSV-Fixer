@@ -11,21 +11,20 @@ import sys
 import json
 import csv
 
+
 runtimePath: str = os.getcwd()
 jsonHeader: dict = {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
 
 
 
-
-def getFilenamesInDir() -> tuple:
+def getFilenamesInDir() -> list:
     return os.listdir()
-
 
 def getCsvFilename(filenames: str) -> str:
     return "".join(name for name in filenames if name.endswith(".csv"))
 
 def getFileDescriptor(filename: str) -> None:
-    return open(filename)
+    return open(filename, "r")
 
 def readFileLines(filename: str) -> dict:
     with open(filename, "r") as file:
@@ -39,9 +38,13 @@ def writeLinesToFile(filename: str, content: list) -> None:
     with open(filename, "w") as file:
         file.writelines(content)
 
-def writeToFile(filename: str, content: str):
+def writeToFile(filename: str, content: str) -> None:
     with open(filename, "w") as file:
         file.write(content)
+
+
+def cleanFiles() -> None:
+    os.remove("parsed_subscriptions.csv")
 
 
 # ---------- Main functions --------
@@ -74,7 +77,7 @@ def convertCsvToJson(filename: str) -> str:
     for row in csvParser:
         csvConverted["subscriptions"].append(row)
         
-    debugPrint(f"Done! file saves as 'subscriptions.json'")
+    debugPrint(f"Done! file saved as 'subscriptions.json'")
 
     return json.dumps(csvConverted, indent=4)
 
@@ -85,7 +88,7 @@ def debugPrint(message: str) -> None:
 
 
 
-def main():
+def main() -> None:
 
     filenames: list = getFilenamesInDir()
     csvFilename: str = getCsvFilename(filenames)
@@ -99,8 +102,7 @@ def main():
     writeToFile("subscriptions.json", convertedCsvToJson)
 
     
-    
-     
+    cleanFiles()
 
 
 if __name__ == "__main__":
