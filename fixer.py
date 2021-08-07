@@ -24,22 +24,22 @@ def getCsvFilename(filenames: str) -> str:
     return "".join(name for name in filenames if name.endswith(".csv"))
 
 def getFileDescriptor(filename: str) -> None:
-    return open(filename, "r")
+    return open(filename, "r", encoding="utf8")
 
 def readFileLines(filename: str) -> dict:
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         return file.readlines()
 
 def readFile(filename: str) -> str:
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf8") as file:
         return file.read()
 
 def writeLinesToFile(filename: str, content: list) -> None:
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf8") as file:
         file.writelines(content)
 
 def writeToFile(filename: str, content: str) -> None:
-    with open(filename, "w") as file:
+    with open(filename, "w", encoding="utf8") as file:
         file.write(content)
 
 
