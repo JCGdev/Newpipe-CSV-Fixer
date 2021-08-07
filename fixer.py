@@ -10,12 +10,31 @@ import os
 import sys
 import json
 import csv
+import argparse
 
+# -------- Setting arguments -----------
+
+argumentParser = argparse.ArgumentParser(description="Convert your Youtube takeout CSV into a JSON that NewPipe is able to read!")
+argumentParser.add_argument("-f", "--file", type=str, required=True, help="Path of your subscriptions CSV")
+argumentParser.add_argument("-e", "--encoding", type=str, required=False, help="Specify other encoding, by default is utf8")
+
+arguments = argumentParser.parse_args()
+
+# ---------------------------------------
+
+
+# ------ Defining global variables ------
 
 runtimePath: str = os.getcwd()
 jsonHeader: dict = {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
 
+csvFile: str = arguments.file
 
+if((paramEncoding := arguments.encoding) == None):
+    paramEncoding = "utf8"
+
+
+# ---------------------------------------
 
 def getFilenamesInDir() -> list:
     return os.listdir()
@@ -24,22 +43,27 @@ def getCsvFilename(filenames: str) -> str:
     return "".join(name for name in filenames if name.endswith(".csv"))
 
 def getFileDescriptor(filename: str) -> None:
-    return open(filename, "r", encoding="utf8")
+    global paramEncoding
+    return open(filename, "r", encoding=paramEncoding)
 
 def readFileLines(filename: str) -> dict:
-    with open(filename, "r", encoding="utf8") as file:
+    global paramEncoding
+    with open(filename, "r", encoding=paramEncoding) as file:
         return file.readlines()
 
 def readFile(filename: str) -> str:
-    with open(filename, "r", encoding="utf8") as file:
+    global paramEncoding
+    with open(filename, "r", encoding=paramEncoding) as file:
         return file.read()
 
 def writeLinesToFile(filename: str, content: list) -> None:
-    with open(filename, "w", encoding="utf8") as file:
+    global paramEncoding
+    with open(filename, "w", encoding=paramEncoding) as file:
         file.writelines(content)
 
 def writeToFile(filename: str, content: str) -> None:
-    with open(filename, "w", encoding="utf8") as file:
+    global paramEncoding
+    with open(filename, "w", encoding=paramEncoding) as file:
         file.write(content)
 
 
@@ -50,7 +74,7 @@ def cleanFiles() -> None:
 # ---------- Main functions --------
 
 
-def prepareCsv(filename: str) -> list:
+def parseCsv(filename: str) -> list:
 
     debugPrint("Parsing CSV file...")
 
@@ -67,9 +91,8 @@ def prepareCsv(filename: str) -> list:
 
 def convertCsvToJson(filename: str) -> str:
 
-    debugPrint("Converting parsed CSV to JSON file...")    
-
     global jsonHeader
+    debugPrint("Converting parsed CSV to JSON file...")    
 
     csvConverted: list = jsonHeader 
     csvParser = csv.DictReader(getFileDescriptor(filename))
@@ -90,20 +113,22 @@ def debugPrint(message: str) -> None:
 
 def main() -> None:
 
-    filenames: list = getFilenamesInDir()
-    csvFilename: str = getCsvFilename(filenames)
-
-    debugPrint(f"Detected CSV File --> {csvFilename}")
-
-    parsedCsvContent: list = prepareCsv(csvFilename)
-    writeLinesToFile("parsed_subscriptions.csv", parsedCsvContent)
-
-    convertedCsvToJson: str = convertCsvToJson("parsed_subscriptions.csv")
-    writeToFile("subscriptions.json", convertedCsvToJson)
-
+    global csvFile
     
-    cleanFiles()
+    try:
+        parsedCsvContent: list = parseCsv(csvFile)
+        writeLinesToFile("parsed_subscriptions.csv", parsedCsvContent)
 
+        convertedCsvToJson: str = convertCsvToJson("parsed_subscriptions.csv")
+        writeToFile("subscriptions.json", convertedCsvToJson)
+
+        cleanFiles()
+
+    except UnicodeDecodeError:
+        debugPrint("ERROR (UnicodeDecodeError). Please try to run the script with --encode cp437")
+        cleanFiles()
+        sys.exit(1)
+        
 
 if __name__ == "__main__":
     main()
