@@ -16,6 +16,8 @@ import argparse
 
 argumentParser = argparse.ArgumentParser(description="Convert your Youtube takeout CSV into a JSON that NewPipe is able to read!")
 argumentParser.add_argument("-f", "--file", type=str, required=True, help="Path of your subscriptions CSV")
+argumentParser.add_argument("-j", "--jsonHeader", type=str, required=True, help="Path to the NewPipe Headers (app_version, app_verion_int...)")
+
 argumentParser.add_argument("-e", "--encoding", type=str, required=False, help="Specify other encoding, by default is utf8")
 
 arguments = argumentParser.parse_args()
@@ -26,9 +28,8 @@ arguments = argumentParser.parse_args()
 # ------ Defining global variables ------
 
 runtimePath: str = os.getcwd()
-jsonHeader: dict = {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
-
 csvFile: str = arguments.file
+jsonHeaderFile: list = arguments.jsonHeader
 
 if((paramEncoding := arguments.encoding) == None):
     paramEncoding = "utf8"
@@ -91,10 +92,10 @@ def parseCsv(filename: str) -> list:
 
 def convertCsvToJson(filename: str) -> str:
 
-    global jsonHeader
+    global jsonHeaderFile
     debugPrint("Converting parsed CSV to JSON file...")    
 
-    csvConverted: list = jsonHeader 
+    csvConverted: dict = json.loads(readFile(jsonHeaderFile))
     csvParser = csv.DictReader(getFileDescriptor(filename))
     
     for row in csvParser:
