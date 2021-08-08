@@ -14,12 +14,12 @@ to convert the CSV into a NewPipe valid JSON. This is an automation of his guide
 
 ## General info
 
-### What's the process for making a NewPipe valid JSON?
+### What's the process of making a NewPipe valid JSON?
 
-- First of all, the key values of the CSV must be changed to ***service_id,url,name***.
+- First of all, the 3 column names of the CSV must be changed to ***service_id,url,name***.
 - Then, all "http" ocurrencies are changed to "https".
 - After that, the parsed CSV is converted into a JSON, that is appended into a empty list
-in the JSON header ***{"app_version":"x.xx.x","app_version_int":xxx,"subscriptions":[]}*** .
+in the NewPipe JSON header ***{"app_version":"x.xx.x","app_version_int":xxx,"subscriptions":[]}*** .
 
 
 
@@ -39,7 +39,6 @@ You will get something like:
 > {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
 
 Those are the headers needed to convert the CSV into a NewPipe readeable JSON, as the version declared 
-
 in the JSON must coincide with the NewPipe version
 
 ### Move your CSV subscription file and json header to the src dir and execute the script:
