@@ -19,20 +19,36 @@ to convert the CSV into a NewPipe valid JSON. This is an automation of his guide
 - First of all, the key values of the CSV must be changed to ***service_id,url,name***.
 - Then, all "http" ocurrencies are changed to "https".
 - After that, the parsed CSV is converted into a JSON, that is appended into a empty list
-in the JSON header ***{"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}*** .
+in the JSON header ***{"app_version":"x.xx.x","app_version_int":xxx,"subscriptions":[]}*** .
 
 
 
 ## Setup
 
-> NOTE: There must be only one CSV file in the src dir, as it has to be detected.
 
 > NOTE: No requirements needed, as they are already in the python standart lib
 
-### Move your CSV subscription file to the src dir and execute the script:
+### Export your (empty) NewPipe subscription list
 
-`$ python3 fixer.py`
 
-It will detect the CSV, and a new file named ***subscriptions.json*** will be created.
+![](images/export.png)
 
-![](example.png)
+
+You will get something like:
+
+> {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
+
+Those are the headers needed to convert the CSV into a NewPipe readeable JSON, as the version declared 
+
+in the JSON must coincide with the NewPipe version
+
+### Move your CSV subscription file and json header to the src dir and execute the script:
+
+`$ python3 fixer.py -f/--file [filename.csv] -j/--jsonHeader [header.json]`
+
+### In case of getting ***UnicodeDecodeError***, try encoding with cp437 or other:
+ 
+`$ python3 fixer.py -f/--file [filename.csv] -j/--jsonHeader [header.json] -e/--encode "cp437"`
+
+
+![](images/example.png)
