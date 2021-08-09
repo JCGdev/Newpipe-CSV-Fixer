@@ -67,6 +67,16 @@ def writeToFile(filename: str, content: str) -> None:
     with open(filename, "w", encoding=paramEncoding) as file:
         file.write(content)
 
+def removeBlankLines(paramList: list) -> list:
+    
+    parsedList: list = []
+
+    for section in paramList:
+        if not section.isspace():
+            parsedList.append(section)
+
+    return parsedList
+
 
 def cleanFiles() -> None:
     os.remove("parsed_subscriptions.csv")
@@ -79,7 +89,7 @@ def parseCsv(filename: str) -> list:
 
     debugPrint("Parsing CSV file...")
 
-    csvContent: list = readFileLines(filename)
+    csvContent: list = removeBlankLines(readFileLines(filename))
     csvContent[0] = "service_id,url,name\n" # Overriding not working key names from the 1st line
 
 
