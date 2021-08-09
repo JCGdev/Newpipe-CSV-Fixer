@@ -82,12 +82,12 @@ def parseCsv(filename: str) -> list:
     csvContent: list = readFileLines(filename)
     csvContent[0] = "service_id,url,name\n" # Overriding not working key names from the 1st line
 
-    parsedCsvContent: list = []
 
     for line in csvContent:
-        parsedCsvContent.append(line.replace("http", "https")) 
+        index: int = csvContent.index(line)
+        csvContent[index] = line.replace("http", "https") 
 
-    return parsedCsvContent
+    return csvContent
 
 
 def convertCsvToJson(filename: str) -> str:
