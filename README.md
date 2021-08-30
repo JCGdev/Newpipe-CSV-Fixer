@@ -9,6 +9,7 @@ to convert the CSV into a NewPipe valid JSON. This is an automation of his guide
 
 * [General info](#general-info)
 * [Setup](#setup)
+* [Parameters](#parameters)
 * [Main issues](#main-issues)
 
 
@@ -39,26 +40,35 @@ You will get something like:
 
 > {"app_version":"0.21.7","app_version_int":973,"subscriptions":[]}
 
-Those are the headers needed to convert the CSV into a NewPipe readeable JSON, as the version declared 
-in the JSON must coincide with the NewPipe version
+Those are the headers needed to convert the CSV into a NewPipe valid JSON, as the version declared 
+in the JSON must coincide with the NewPipe app version.
 
 
-### Move your CSV subscription file and json header to the src dir and execute the script:
+### Move your CSV subscription file and json header to the source dir and execute the script:
 
-`$ python3 fixer.py -f/--file [filename.csv] -j/--jsonHeader [header.json]`
+`$ python3 fixer.py -f [filename.csv] -j [header.json]`
+
 
 ![](images/example.png)
 
 
 ## Import your subscription file:
 
+
 ![](images/import.png)
+
+
+## Parameters
+
+- ***-f / --file*** (The csv that contains the subscriptions)
+- ***-j / --jsonHeader*** (The exported json from NewPipe that includes the headers)
+- ***-e / --encoding*** (to specify the file encoding) 
 
 
 ## Main issues
 
 ### In case of getting ***UnicodeDecodeError***, try encoding with cp437 or other:
  
-`$ python3 fixer.py -f/--file [filename.csv] -j/--jsonHeader [header.json] -e/--encode "cp437"`
+`$ python3 fixer.py -f [filename.csv] -j [header.json] -e "cp437"`
 
 
