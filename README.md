@@ -11,6 +11,7 @@ to convert the CSV into a NewPipe valid JSON. This is an automation of his guide
 * [Setup](#setup)
 * [Parameters](#parameters)
 * [Main issues](#main-issues)
+* [Alternatives](#alternatives)
 
 
 
@@ -19,9 +20,9 @@ to convert the CSV into a NewPipe valid JSON. This is an automation of his guide
 ### What's the process of making a NewPipe valid JSON?
 
 - First of all, the 3 column names of the CSV must be changed to ***service_id,url,name***.
-- Then, all "http" ocurrencies are changed to "https".
+- Then, all "http" ocurrencies have to be changed changed to "https".
 - After that, the parsed CSV is converted into a JSON, that is appended into a empty list
-in the NewPipe JSON header ***{"app_version":"x.xx.x","app_version_int":xxx,"subscriptions":[]}*** .
+in the NewPipe JSON header ***{"app_version":"x.xx.x","app_version_int":xxx"","subscriptions":[]}*** .
 
 
 
@@ -62,7 +63,7 @@ in the JSON must coincide with the NewPipe app version.
 
 - ***-f / --file*** (The csv that contains the subscriptions)
 - ***-j / --jsonHeader*** (The exported json from NewPipe that includes the headers)
-- ***-e / --encoding*** (to specify the file encoding) 
+- ***-e / --encoding*** (To specify the file encoding) 
 
 
 ## Main issues
@@ -71,4 +72,10 @@ in the JSON must coincide with the NewPipe app version.
  
 `$ python3 fixer.py -f [filename.csv] -j [header.json] -e "cp437"`
 
+## Alternatives
+
+[juandarr](https://github.com/juandarr) has done a website alternative for this script.
+It may be more convenient for some people, specially for those who are not used to using the terminal.
+
+ - [link here](https://juandarr.github.io/json-youtube-export/)
 
