@@ -31,7 +31,8 @@ runtimePath: str = os.getcwd()
 csvFile: str = arguments.file
 jsonHeaderFile: list = arguments.jsonHeader
 
-if((paramEncoding := arguments.encoding) == None):
+paramEncoding = arguments.encoding
+if(paramEncoding == None):
     paramEncoding = "utf8"
 
 
