@@ -28,10 +28,10 @@ arguments = argumentParser.parse_args()
 # ------ Defining global variables ------
 
 runtimePath: str = os.getcwd()
-csvFile: str = arguments.file
-jsonHeaderFile: list = arguments.jsonHeader
+csvFilename: str = arguments.file
+jsonHeaderFilename: list = arguments.jsonHeader
 
-paramEncoding = arguments.encoding
+paramEncoding: str = arguments.encoding
 if(paramEncoding == None):
     paramEncoding = "utf8"
 
@@ -91,7 +91,7 @@ def parseCsv(filename: str) -> list:
     debugPrint("Parsing CSV file...")
 
     csvContent: list = removeBlankLines(readFileLines(filename))
-    csvContent[0] = "service_id,url,name\n" # Overriding not working key names from the 1st line
+    csvContent[0] = "service_id,url,name\n" # Overriding not working column names from the 1st line
 
 
     for line in csvContent:
@@ -103,10 +103,10 @@ def parseCsv(filename: str) -> list:
 
 def convertCsvToJson(filename: str) -> str:
 
-    global jsonHeaderFile
+    global jsonHeaderFilename
     debugPrint("Converting parsed CSV to JSON file...")    
 
-    csvConverted: dict = json.loads(readFile(jsonHeaderFile))
+    csvConverted: dict = json.loads(readFile(jsonHeaderFilename))
     csvParser = csv.DictReader(getFileDescriptor(filename))
     
     for row in csvParser:
@@ -125,10 +125,10 @@ def debugPrint(message: str) -> None:
 
 def main() -> None:
 
-    global csvFile
+    global csvFilename
     
     try:
-        parsedCsvContent: list = parseCsv(csvFile)
+        parsedCsvContent: list = parseCsv(csvFilename)
         writeLinesToFile("parsed_subscriptions.csv", parsedCsvContent)
 
         convertedCsvToJson: str = convertCsvToJson("parsed_subscriptions.csv")
