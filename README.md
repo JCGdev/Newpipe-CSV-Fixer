@@ -49,6 +49,10 @@ in the JSON must coincide with the NewPipe app version.
 
 `$ python3 fixer.py -f [filename.csv] -j [header.json]`
 
+If you're on Windows, you can execute instead:
+
+`friendlyFixer.cmd`
+
 
 ![](images/example.png)
 
