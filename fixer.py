@@ -44,7 +44,7 @@ def getFilenamesInDir() -> list:
 def getCsvFilename(filenames: str) -> str:
     return "".join(name for name in filenames if name.endswith(".csv"))
 
-def getFileDescriptor(filename: str) -> None:
+def getFileDescriptor(filename: str) -> _io.TextIOWrapper:
     global paramEncoding
     return open(filename, "r", encoding=paramEncoding)
 
