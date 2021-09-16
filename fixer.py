@@ -8,6 +8,7 @@
 
 import os
 import sys
+import io
 import json
 import csv
 import argparse
@@ -41,32 +42,30 @@ if(paramEncoding == None):
 def getFilenamesInDir() -> list:
     return os.listdir()
 
-def getCsvFilename(filenames: str) -> str:
-    return "".join(name for name in filenames if name.endswith(".csv"))
+# def getCsvFilename(filenames: str) -> str:
+#   return "".join(name for name in filenames if name.endswith(".csv"))
 
-def getFileDescriptor(filename: str) -> _io.TextIOWrapper:
+def getFileDescriptor(filename: str, mode: str) -> io.TextIOWrapper:
     global paramEncoding
-    return open(filename, "r", encoding=paramEncoding)
+    return open(filename, mode, encoding=paramEncoding)
 
-def readFileLines(filename: str) -> dict:
-    global paramEncoding
-    with open(filename, "r", encoding=paramEncoding) as file:
-        return file.readlines()
+def readFileLines(fileDescriptor: io.TextIOWrapper) -> dict:
+    lines: dict = fileDescriptor.readlines()
+    fileDescriptor.close()
+    return lines
 
-def readFile(filename: str) -> str:
-    global paramEncoding
-    with open(filename, "r", encoding=paramEncoding) as file:
-        return file.read()
+def readFileString(fileDescriptor: io.TextIOWrapper) -> str:
+    fileContent: str = fileDescriptor.read()
+    fileDescriptor.close()
+    return fileContent
 
-def writeLinesToFile(filename: str, content: list) -> None:
-    global paramEncoding
-    with open(filename, "w", encoding=paramEncoding) as file:
-        file.writelines(content)
+def writeLinesToFile(fileDescriptor: io.TextIOWrapper, content: list) -> None:
+    fileDescriptor.writelines(content)
+    fileDescriptor.close()
 
-def writeToFile(filename: str, content: str) -> None:
-    global paramEncoding
-    with open(filename, "w", encoding=paramEncoding) as file:
-        file.write(content)
+def writeStringToFile(fileDescriptor: io.TextIOWrapper, content: str) -> None:
+    fileDescriptor.write(content)
+    fileDescriptor.close()
 
 def removeBlankLines(paramList: list) -> list:
     
@@ -86,11 +85,9 @@ def cleanFiles() -> None:
 # ---------- Main functions --------
 
 
-def parseCsv(filename: str) -> list:
+def parseCsv(csvFileDescriptor: io.TextIOWrapper) -> list:
 
-    debugPrint("Parsing CSV file...")
-
-    csvContent: list = removeBlankLines(readFileLines(filename))
+    csvContent: list = removeBlankLines(readFileLines(csvFileDescriptor))
     csvContent[0] = "service_id,url,name\n" # Overriding not working column names from the 1st line
 
 
@@ -101,21 +98,18 @@ def parseCsv(filename: str) -> list:
     return csvContent
 
 
-def convertCsvToJson(filename: str) -> str:
+def convertCsvToJson(CsvFileDescriptor: io.TextIOWrapper) -> str:
 
     global jsonHeaderFilename
     debugPrint("Converting parsed CSV to JSON file...")    
 
-    csvConverted: dict = json.loads(readFile(jsonHeaderFilename))
-    csvParser = csv.DictReader(getFileDescriptor(filename))
+    jsonHeaderContent: dict = json.loads(readFileString(getFileDescriptor(jsonHeaderFilename, "r")))
+    csvParser = csv.DictReader(CsvFileDescriptor)
     
     for row in csvParser:
-        csvConverted["subscriptions"].append(row)
+        jsonHeaderContent["subscriptions"].append(row)
         
-    debugPrint(f"Done! file saved as 'subscriptions.json'")
-
-    return json.dumps(csvConverted, indent=4)
-
+    return json.dumps(jsonHeaderContent, indent=4)
 
 
 def debugPrint(message: str) -> None:
@@ -128,11 +122,13 @@ def main() -> None:
     global csvFilename
     
     try:
-        parsedCsvContent: list = parseCsv(csvFilename)
-        writeLinesToFile("parsed_subscriptions.csv", parsedCsvContent)
+        debugPrint("Parsing CSV file...")
+        parsedCsvContent: list = parseCsv(getFileDescriptor(csvFilename, "r"))
+        writeLinesToFile(getFileDescriptor("parsed_subscriptions.csv", "w"), parsedCsvContent)
 
-        convertedCsvToJson: str = convertCsvToJson("parsed_subscriptions.csv")
-        writeToFile("subscriptions.json", convertedCsvToJson)
+        convertedCsvToJson: str = convertCsvToJson(getFileDescriptor("parsed_subscriptions.csv", "r"))
+        writeStringToFile(getFileDescriptor("subscriptions.json", "w"), convertedCsvToJson)
+        debugPrint(f"Done! file saved as 'subscriptions.json'")
 
         cleanFiles()
 
